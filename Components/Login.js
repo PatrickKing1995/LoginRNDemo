@@ -30,6 +30,10 @@ export default class Login extends Component {
                     ],
                     { cancelable: false }
                   )
+                  this.setState({
+                    email:'',
+                    password:'',
+                })
             })
             .catch(function(error) {
                 Alert.alert(
