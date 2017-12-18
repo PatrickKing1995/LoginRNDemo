@@ -21,17 +21,8 @@ export default class Login extends Component {
 
     LoginPer(){
         firebaseApp.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then(()=>{
-                Alert.alert(
-                    'LOGIN',
-                    'Successfull',
-                    [
-                      {text: 'OK', onPress: () => this.props.navigation.navigate('MH_Home')},
-                    ],
-                    { cancelable: false }
-                  )
-            
-            })
+            .then(  () => this.props.navigation.navigate('MH_Home'),
+            )
             .catch(function(error) {
                 Alert.alert(
                     'LOGIN',
