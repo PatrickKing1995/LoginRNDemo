@@ -6,15 +6,41 @@ import { StyleSheet,
     KeyboardAvoidingView, 
     TouchableOpacity , 
     AsyncStorage,
-    Image,Alert, ListView, ActivityIndicator, StatusBar } from 'react-native';
+    Image,Alert, ListView, ActivityIndicator, StatusBar, Picker, Modal } from 'react-native';
 
 export default class Home extends Component {
+
+    
     constructor(props){
         super(props);
         this.state = {
             dataSource: new ListView.DataSource({rowHasChanged: (r1,r2)=>r1!==r2}),
+            modalVisible: false,
         }
     }
+
+    static navigationOptions =({ navigation }) => { 
+        const { params = {} } = navigation.state
+        return{
+        headerTintColor: '#363636',
+        headerStyle: {
+            backgroundColor: '#FFB5C5',
+        },
+        headerTitleStyle: { 
+            color: '#363636' 
+        },
+        title: 'Register',
+        headerRight: <TouchableOpacity
+                        onPress={()=>params.handleSave()}
+                     >
+                        <Image style={{width: 35, height: 35, backgroundColor: 'transparent', marginRight: 20, }} source={require('./addone.png')}/>
+                    </TouchableOpacity>
+        }
+    }
+    
+    toggleModal=()=>{
+        this.setState({ modalVisible: true });
+     }
     
     fetchData(){
         fetch('http://192.168.21.102/App_Demo/thanhvien.php', {method: "POST", body: null})
@@ -29,7 +55,10 @@ export default class Home extends Component {
 
     componentDidMount(){
         this.fetchData();
+        this.props.navigation.setParams({ handleSave: this.toggleModal.bind(this) });
     }
+
+
 
     taoHang(property){
         return(
@@ -38,7 +67,7 @@ export default class Home extends Component {
                     <Text>{property.nameTV}</Text>
                 </View>
                 <View style={styles.textInputAge}>
-                    <Text>{property.ageTV}</Text>
+                    <Image style={styles.imageInsert} source={require('./edit.png')}/>
                 </View>
             </View>
         );
@@ -56,6 +85,19 @@ export default class Home extends Component {
                     renderRow={this.taoHang}
                 />                
             </View>
+               <Modal animationType = {"slide"} transparent = {true}
+                  visible = {this.state.modalVisible}
+                  onRequestClose = {() => { console.log("Modal has been closed.") } }>
+                  <View style = {modal.modal}>
+                     <Text style = {modal.text}>Modal is open!</Text>
+                     
+                     <TouchableOpacity onPress = {() => {
+                        this.toggleModal(!this.state.modalVisible)}}>
+                        
+                        <Text style = {modal.text}>Close Modal</Text>
+                     </TouchableOpacity>
+                  </View>
+               </Modal>
         </View>
     );
   }
@@ -68,6 +110,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'pink',  
+    },
+    containerDialog: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: 20,
+        paddingRight: 20,
+        backgroundColor: 'pink', 
     },
     container: {
         flex: 1,
@@ -83,6 +133,14 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight:'bold',
     },
+    textInputAdd: {
+        alignSelf: 'stretch',
+        padding: 14,
+        width: 200,
+        marginBottom: 4,
+        marginRight: 2,
+        backgroundColor: '#fff',
+    },
     textInput: {
         alignSelf: 'stretch',
         padding: 14,
@@ -94,7 +152,6 @@ const styles = StyleSheet.create({
     textInputAge: {
         alignSelf: 'stretch',
         padding: 14,
-        width: 250,
         marginBottom: 4,
         backgroundColor: '#fff',
     },
@@ -115,10 +172,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-    imagelogin: {
-        width: 70,
-        height: 70,
-        marginBottom: 20,
+    imageInsert: {
+        width: 20,
+        height: 20,
         backgroundColor: 'transparent',
     },
     textRegister: {
@@ -138,4 +194,22 @@ const styles = StyleSheet.create({
 
     }
 });
+
+
+
+  const modal = StyleSheet.create ({
+
+    modal: {
+       flex: 1,
+       alignItems: 'center',
+       backgroundColor: '#CFCFCF',
+       borderRadius: 30,
+
+    },
+    text: {
+        fontWeight: 'bold',
+        fontSize: 15,
+        color: '#363636',
+    }
+ })
 
